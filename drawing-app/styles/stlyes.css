@@ -8,8 +8,8 @@ body {
 
 h1 {
     background: #7F7FD5;
-    background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
-    background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    background: -webkit-linear-gradient(to right, blue, red);
+    background: linear-gradient(to right, blue,red,  red);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;

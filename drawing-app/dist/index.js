@@ -1,49 +1,108 @@
 "use strict";
-const canvas = document.getElementById('drawing-board');
-const toolbarElement = document.getElementById('toolbar');
-const ctx = canvas.getContext('2d');
-if (!ctx) {
-    throw new Error("Failed to get canvas 2D context");
+class DrawingBoard {
+    constructor(canvasId, toolbarId) {
+        this.isPainting = false;
+        this.lineWidth = 5;
+        this.strokes = [];
+        this.currentStroke = [];
+        const canvasElement = document.getElementById(canvasId);
+        const toolbarElement = document.getElementById(toolbarId);
+        if (!canvasElement || !toolbarElement) {
+            throw new Error("Canvas or toolbar element not found");
+        }
+        this.canvas = canvasElement;
+        this.ctx = this.canvas.getContext('2d');
+        if (!this.ctx) {
+            throw new Error("Failed to get canvas 2D context");
+        }
+        this.setupCanvas();
+        this.addEventListeners(toolbarElement);
+    }
+    setupCanvas() {
+        const rect = this.canvas.getBoundingClientRect();
+        this.canvas.width = window.innerWidth - this.canvas.offsetLeft;
+        this.canvas.height = window.innerHeight - this.canvas.offsetTop;
+    }
+    addEventListeners(toolbar) {
+        toolbar.addEventListener('click', (e) => this.handleToolbarClick(e));
+        toolbar.addEventListener('change', (e) => this.handleToolbarChange(e));
+        this.canvas.addEventListener('mousedown', (e) => this.startDrawing(e));
+        this.canvas.addEventListener('mouseup', () => this.stopDrawing());
+        this.canvas.addEventListener('mousemove', (e) => this.draw(e));
+    }
+    handleToolbarClick(e) {
+        const target = e.target;
+        if (target.id === 'clear') {
+            this.clearCanvas();
+        }
+        else if (target.id === 'undo') {
+            this.undoLastStroke();
+        }
+    }
+    handleToolbarChange(e) {
+        const target = e.target;
+        if (target.id === 'stroke') {
+            this.ctx.strokeStyle = target.value;
+        }
+        if (target.id === 'lineWidth') {
+            this.lineWidth = parseInt(target.value, 10);
+        }
+    }
+    startDrawing(e) {
+        this.isPainting = true;
+        this.currentStroke = [];
+        this.ctx.beginPath();
+        this.ctx.moveTo(e.clientX - this.canvas.offsetLeft, e.clientY - this.canvas.offsetTop);
+    }
+    stopDrawing() {
+        this.isPainting = false;
+        this.ctx.beginPath();
+        if (this.currentStroke.length > 0) {
+            this.strokes.push([...this.currentStroke]);
+        }
+    }
+    draw(e) {
+        if (!this.isPainting)
+            return;
+        const x = e.clientX - this.canvas.offsetLeft;
+        const y = e.clientY - this.canvas.offsetTop;
+        const color = this.ctx.strokeStyle;
+        this.currentStroke.push([x, y, color, this.lineWidth]);
+        this.ctx.lineWidth = this.lineWidth;
+        this.ctx.lineCap = 'round';
+        this.ctx.lineTo(x, y);
+        this.ctx.stroke();
+    }
+    clearCanvas() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.strokes = [];
+    }
+    undoLastStroke() {
+        this.strokes.pop();
+        this.redrawCanvas();
+    }
+    redrawCanvas() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.strokes.forEach(stroke => {
+            this.ctx.beginPath();
+            stroke.forEach(([x, y, color, lineWidth], index) => {
+                this.ctx.strokeStyle = color;
+                this.ctx.lineWidth = lineWidth;
+                this.ctx.lineCap = 'round';
+                if (index === 0) {
+                    this.ctx.moveTo(x, y);
+                }
+                else {
+                    this.ctx.lineTo(x, y);
+                    this.ctx.stroke();
+                }
+            });
+        });
+    }
 }
-const rect = canvas.getBoundingClientRect();
-const canvasOffsetX = canvas.offsetLeft;
-const canvasOffsetY = canvas.offsetTop;
-canvas.width = window.innerWidth - canvasOffsetX;
-canvas.height = window.innerHeight - canvasOffsetY;
-let isPainting = false;
-let lineWidth = 5;
-let startX = 0;
-let startY = 0;
-toolbarElement.addEventListener('click', (e) => {
-    const target = e.target;
-    if (target.id === 'clear') {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-});
-toolbarElement.addEventListener('change', (e) => {
-    const target = e.target;
-    if (target.id === 'stroke') {
-        ctx.strokeStyle = target.value;
-    }
-    if (target.id === 'lineWidth') {
-        lineWidth = parseInt(target.value, 10);
-    }
-});
-const draw = (e) => {
-    if (!isPainting || !ctx)
-        return;
-    ctx.lineWidth = lineWidth;
-    ctx.lineCap = 'round';
-    ctx.lineTo(e.clientX - canvasOffsetX, e.clientY - canvasOffsetY);
-    ctx.stroke();
-};
-canvas.addEventListener('mousedown', (e) => {
-    isPainting = true;
-    ctx === null || ctx === void 0 ? void 0 : ctx.beginPath();
-    ctx === null || ctx === void 0 ? void 0 : ctx.moveTo(e.clientX - canvasOffsetX, e.clientY - canvasOffsetY);
-});
-canvas.addEventListener('mouseup', () => {
-    isPainting = false;
-    ctx === null || ctx === void 0 ? void 0 : ctx.beginPath();
-});
-canvas.addEventListener('mousemove', draw);
+try {
+    new DrawingBoard('drawing-board', 'toolbar');
+}
+catch (error) {
+    console.error("Error initializing drawing board:", error);
+}
