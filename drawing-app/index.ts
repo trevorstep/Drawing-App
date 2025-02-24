@@ -77,18 +77,20 @@ class DrawingBoard {
 
     private draw(e: MouseEvent): void {
         if (!this.isPainting) return;
-
+    
         const x = e.clientX - this.canvas.offsetLeft;
         const y = e.clientY - this.canvas.offsetTop;
         const color = this.ctx.strokeStyle as string;
-
-        this.currentStroke.push([x, y, color, this.lineWidth]); // Storing as a tuple
-
+    
+        this.currentStroke.push([x, y, color, this.lineWidth]); // Store each point
+    
         this.ctx.lineWidth = this.lineWidth;
         this.ctx.lineCap = 'round';
+        
         this.ctx.lineTo(x, y);
         this.ctx.stroke();
     }
+    
 
     private clearCanvas(): void {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -96,8 +98,10 @@ class DrawingBoard {
     }
 
     private undoLastStroke(): void {
-        this.strokes.pop(); // Remove last stroke
-        this.redrawCanvas();
+        if (this.strokes.length > 0) {
+            this.strokes.pop(); // Remove last stroke
+            this.redrawCanvas(); // Redraw without the last stroke
+        }
     }
 
     private redrawCanvas(): void {

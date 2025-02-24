@@ -53,8 +53,14 @@ h1 {
 }
 
 #toolbar button:hover {
-    background-color: #1976D2; /* Lighter blue */
+    background-color: #1976D2; 
     cursor: pointer;
     transform: scale(1.05);
     transition: background-color 0.2s, transform 0.2s;
 }
+
+#toolbar button:active {
+    transform: scale(0.95);
+    background-color: #0D47A1; 
+}
+
