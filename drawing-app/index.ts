@@ -1,15 +1,12 @@
 const canvas = document.getElementById('drawing-board') as HTMLCanvasElement;
 const toolbarElement = document.getElementById('toolbar') as HTMLDivElement;
 
-if (!canvas || !toolbar) {
-    throw new Error("Canvas or toolbar element not found");
-}
-
 const ctx = canvas.getContext('2d');
 if (!ctx) {
     throw new Error("Failed to get canvas 2D context");
 }
 
+const rect = canvas.getBoundingClientRect();
 const canvasOffsetX = canvas.offsetLeft;
 const canvasOffsetY = canvas.offsetTop;
 
@@ -21,9 +18,7 @@ let lineWidth = 5;
 let startX = 0;
 let startY = 0;
 
-if (!toolbarElement) {
-    throw new Error("Toolbar element not found");
-}
+
 
 toolbarElement.addEventListener('click', (e: MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -50,14 +45,14 @@ const draw = (e: MouseEvent): void => {
     ctx.lineWidth = lineWidth;
     ctx.lineCap = 'round';
 
-    ctx.lineTo(e.clientX - canvasOffsetX, e.clientY);
+    ctx.lineTo(e.clientX - canvasOffsetX, e.clientY - canvasOffsetY);
     ctx.stroke();
 };
 
 canvas.addEventListener('mousedown', (e: MouseEvent) => {
     isPainting = true;
-    startX = e.clientX;
-    startY = e.clientY;
+    ctx?.beginPath(); 
+    ctx?.moveTo(e.clientX - canvasOffsetX, e.clientY - canvasOffsetY);
 });
 
 canvas.addEventListener('mouseup', () => {
