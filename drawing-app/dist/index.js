@@ -3,8 +3,8 @@ class DrawingBoard {
     constructor(canvasId, toolbarId) {
         this.isPainting = false;
         this.lineWidth = 5;
-        this.strokes = []; // Stores drawn strokes (tuples)
-        this.currentStroke = []; // Stores points for the current stroke
+        this.strokes = [];
+        this.currentStroke = [];
         const canvasElement = document.getElementById(canvasId);
         const toolbarElement = document.getElementById(toolbarId);
         if (!canvasElement || !toolbarElement) {
@@ -19,9 +19,8 @@ class DrawingBoard {
         this.addEventListeners(toolbarElement);
     }
     setupCanvas() {
-        const rect = this.canvas.getBoundingClientRect();
-        this.canvas.width = window.innerWidth - this.canvas.offsetLeft;
-        this.canvas.height = window.innerHeight - this.canvas.offsetTop;
+        this.canvas.width = window.innerWidth * 0.8; // Adjust canvas width dynamically
+        this.canvas.height = window.innerHeight * 0.8; // Adjust canvas height dynamically
     }
     addEventListeners(toolbar) {
         toolbar.addEventListener('click', (e) => this.handleToolbarClick(e));
@@ -51,15 +50,18 @@ class DrawingBoard {
     startDrawing(e) {
         this.isPainting = true;
         this.currentStroke = [];
+        const x = e.clientX - this.canvas.offsetLeft;
+        const y = e.clientY - this.canvas.offsetTop;
+        this.currentStroke.push([x, y, this.ctx.strokeStyle, this.lineWidth]);
         this.ctx.beginPath();
-        this.ctx.moveTo(e.clientX - this.canvas.offsetLeft, e.clientY - this.canvas.offsetTop);
+        this.ctx.moveTo(x, y);
     }
     stopDrawing() {
         this.isPainting = false;
-        this.ctx.beginPath();
         if (this.currentStroke.length > 0) {
             this.strokes.push([...this.currentStroke]);
         }
+        this.ctx.beginPath(); // Reset path
     }
     draw(e) {
         if (!this.isPainting)
@@ -67,7 +69,7 @@ class DrawingBoard {
         const x = e.clientX - this.canvas.offsetLeft;
         const y = e.clientY - this.canvas.offsetTop;
         const color = this.ctx.strokeStyle;
-        this.currentStroke.push([x, y, color, this.lineWidth]); // Store each point
+        this.currentStroke.push([x, y, color, this.lineWidth]);
         this.ctx.lineWidth = this.lineWidth;
         this.ctx.lineCap = 'round';
         this.ctx.lineTo(x, y);
@@ -75,12 +77,12 @@ class DrawingBoard {
     }
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.strokes = []; // Clear stroke history
+        this.strokes = [];
     }
     undoLastStroke() {
         if (this.strokes.length > 0) {
-            this.strokes.pop(); // Remove last stroke
-            this.redrawCanvas(); // Redraw without the last stroke
+            this.strokes.pop();
+            this.redrawCanvas();
         }
     }
     redrawCanvas() {

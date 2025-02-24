@@ -3,8 +3,8 @@ class DrawingBoard {
     private ctx: CanvasRenderingContext2D;
     private isPainting: boolean = false;
     private lineWidth: number = 5;
-    private strokes: [number, number, string, number][][] = []; // Stores drawn strokes (tuples)
-    private currentStroke: [number, number, string, number][] = []; // Stores points for the current stroke
+    private strokes: [number, number, string, number][][] = [];
+    private currentStroke: [number, number, string, number][] = [];
 
     constructor(canvasId: string, toolbarId: string) {
         const canvasElement = document.getElementById(canvasId) as HTMLCanvasElement;
@@ -26,9 +26,8 @@ class DrawingBoard {
     }
 
     private setupCanvas(): void {
-        const rect = this.canvas.getBoundingClientRect();
-        this.canvas.width = window.innerWidth - this.canvas.offsetLeft;
-        this.canvas.height = window.innerHeight - this.canvas.offsetTop;
+        this.canvas.width = window.innerWidth * 0.8; // Adjust canvas width dynamically
+        this.canvas.height = window.innerHeight * 0.8; // Adjust canvas height dynamically
     }
 
     private addEventListeners(toolbar: HTMLDivElement): void {
@@ -62,68 +61,69 @@ class DrawingBoard {
     private startDrawing(e: MouseEvent): void {
         this.isPainting = true;
         this.currentStroke = [];
+        const x = e.clientX - this.canvas.offsetLeft;
+        const y = e.clientY - this.canvas.offsetTop;
+
+        this.currentStroke.push([x, y, this.ctx.strokeStyle as string, this.lineWidth]);
         this.ctx.beginPath();
-        this.ctx.moveTo(e.clientX - this.canvas.offsetLeft, e.clientY - this.canvas.offsetTop);
+        this.ctx.moveTo(x, y);
     }
 
     private stopDrawing(): void {
         this.isPainting = false;
-        this.ctx.beginPath();
-
         if (this.currentStroke.length > 0) {
             this.strokes.push([...this.currentStroke]);
         }
+        this.ctx.beginPath(); // Reset path
     }
 
     private draw(e: MouseEvent): void {
         if (!this.isPainting) return;
-    
+
         const x = e.clientX - this.canvas.offsetLeft;
         const y = e.clientY - this.canvas.offsetTop;
         const color = this.ctx.strokeStyle as string;
-    
-        this.currentStroke.push([x, y, color, this.lineWidth]); // Store each point
-    
+
+        this.currentStroke.push([x, y, color, this.lineWidth]);
+
         this.ctx.lineWidth = this.lineWidth;
         this.ctx.lineCap = 'round';
-        
+
         this.ctx.lineTo(x, y);
         this.ctx.stroke();
     }
-    
 
     private clearCanvas(): void {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.strokes = []; // Clear stroke history
+        this.strokes = [];
     }
 
     private undoLastStroke(): void {
         if (this.strokes.length > 0) {
-            this.strokes.pop(); // Remove last stroke
-            this.redrawCanvas(); // Redraw without the last stroke
+            this.strokes.pop();
+            this.redrawCanvas();
         }
     }
 
     private redrawCanvas(): void {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    
+
         this.strokes.forEach(stroke => {
             this.ctx.beginPath();
             stroke.forEach(([x, y, color, lineWidth], index) => {
                 this.ctx.strokeStyle = color;
                 this.ctx.lineWidth = lineWidth;
                 this.ctx.lineCap = 'round';
-    
+
                 if (index === 0) {
                     this.ctx.moveTo(x, y);
                 } else {
                     this.ctx.lineTo(x, y);
                 }
-                this.ctx.stroke(); 
+                this.ctx.stroke();
             });
         });
     }
-    
 }
 
 // Initialize the drawing board
@@ -132,3 +132,4 @@ try {
 } catch (error) {
     console.error("Error initializing drawing board:", error);
 }
+
