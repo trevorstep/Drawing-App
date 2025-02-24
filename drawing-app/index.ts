@@ -3,8 +3,8 @@ class DrawingBoard {
     private ctx: CanvasRenderingContext2D;
     private isPainting: boolean = false;
     private lineWidth: number = 5;
-    private strokes: [number, number, string, number][][] = []; 
-    private currentStroke: [number, number, string, number][] = []; 
+    private strokes: [number, number, string, number][][] = []; // Stores drawn strokes (tuples)
+    private currentStroke: [number, number, string, number][] = []; // Stores points for the current stroke
 
     constructor(canvasId: string, toolbarId: string) {
         const canvasElement = document.getElementById(canvasId) as HTMLCanvasElement;
@@ -82,7 +82,7 @@ class DrawingBoard {
         const y = e.clientY - this.canvas.offsetTop;
         const color = this.ctx.strokeStyle as string;
 
-        this.currentStroke.push([x, y, color, this.lineWidth]); 
+        this.currentStroke.push([x, y, color, this.lineWidth]); // Storing as a tuple
 
         this.ctx.lineWidth = this.lineWidth;
         this.ctx.lineCap = 'round';
@@ -92,11 +92,11 @@ class DrawingBoard {
 
     private clearCanvas(): void {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.strokes = []; 
+        this.strokes = []; // Clear stroke history
     }
 
     private undoLastStroke(): void {
-        this.strokes.pop(); 
+        this.strokes.pop(); // Remove last stroke
         this.redrawCanvas();
     }
 
@@ -120,6 +120,7 @@ class DrawingBoard {
     }
 }
 
+// Initialize the drawing board
 try {
     new DrawingBoard('drawing-board', 'toolbar');
 } catch (error) {

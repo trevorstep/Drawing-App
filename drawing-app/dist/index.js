@@ -3,8 +3,8 @@ class DrawingBoard {
     constructor(canvasId, toolbarId) {
         this.isPainting = false;
         this.lineWidth = 5;
-        this.strokes = [];
-        this.currentStroke = [];
+        this.strokes = []; // Stores drawn strokes (tuples)
+        this.currentStroke = []; // Stores points for the current stroke
         const canvasElement = document.getElementById(canvasId);
         const toolbarElement = document.getElementById(toolbarId);
         if (!canvasElement || !toolbarElement) {
@@ -67,7 +67,7 @@ class DrawingBoard {
         const x = e.clientX - this.canvas.offsetLeft;
         const y = e.clientY - this.canvas.offsetTop;
         const color = this.ctx.strokeStyle;
-        this.currentStroke.push([x, y, color, this.lineWidth]);
+        this.currentStroke.push([x, y, color, this.lineWidth]); // Storing as a tuple
         this.ctx.lineWidth = this.lineWidth;
         this.ctx.lineCap = 'round';
         this.ctx.lineTo(x, y);
@@ -75,10 +75,10 @@ class DrawingBoard {
     }
     clearCanvas() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.strokes = [];
+        this.strokes = []; // Clear stroke history
     }
     undoLastStroke() {
-        this.strokes.pop();
+        this.strokes.pop(); // Remove last stroke
         this.redrawCanvas();
     }
     redrawCanvas() {
@@ -100,6 +100,7 @@ class DrawingBoard {
         });
     }
 }
+// Initialize the drawing board
 try {
     new DrawingBoard('drawing-board', 'toolbar');
 }
