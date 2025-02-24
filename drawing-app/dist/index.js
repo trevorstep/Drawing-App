@@ -94,8 +94,8 @@ class DrawingBoard {
                 }
                 else {
                     this.ctx.lineTo(x, y);
-                    this.ctx.stroke();
                 }
+                this.ctx.stroke();
             });
         });
     }

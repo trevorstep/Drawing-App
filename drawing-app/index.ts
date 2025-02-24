@@ -102,22 +102,24 @@ class DrawingBoard {
 
     private redrawCanvas(): void {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    
         this.strokes.forEach(stroke => {
             this.ctx.beginPath();
             stroke.forEach(([x, y, color, lineWidth], index) => {
                 this.ctx.strokeStyle = color;
                 this.ctx.lineWidth = lineWidth;
                 this.ctx.lineCap = 'round';
-
+    
                 if (index === 0) {
                     this.ctx.moveTo(x, y);
                 } else {
                     this.ctx.lineTo(x, y);
-                    this.ctx.stroke();
                 }
+                this.ctx.stroke(); 
             });
         });
     }
+    
 }
 
 // Initialize the drawing board

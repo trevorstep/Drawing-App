@@ -47,3 +47,14 @@ h1 {
     color:white;
     padding: 2px;
 }
+
+#drawing-board {
+    border: 1px solid black;
+}
+
+#toolbar button:hover {
+    background-color: #1976D2; /* Lighter blue */
+    cursor: pointer;
+    transform: scale(1.05);
+    transition: background-color 0.2s, transform 0.2s;
+}
