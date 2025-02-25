@@ -92,14 +92,14 @@ class DrawingBoard {
             console.log("Undoing last stroke...");
             this.strokes.pop();
             console.log("After undo:", this.strokes);
-            this.redrawCanvas(); // Ensure we update the canvas
+            this.redrawCanvas();
         }
         else {
             console.log("No strokes to undo.");
         }
     }
     redrawCanvas() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Ensure canvas is cleared
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         console.log("Redrawing canvas...", this.strokes);
         this.strokes.forEach(stroke => {
             if (stroke.length === 0)
@@ -121,9 +121,9 @@ class DrawingBoard {
         });
     }
 }
-// Initialize the drawing board
+let drawingBoard = null;
 try {
-    new DrawingBoard('drawing-board', 'toolbar');
+    drawingBoard = new DrawingBoard('drawing-board', 'toolbar');
 }
 catch (error) {
     console.error("Error initializing drawing board:", error);

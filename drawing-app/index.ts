@@ -115,7 +115,7 @@ class DrawingBoard {
             this.strokes.pop();
             console.log("After undo:", this.strokes);
     
-            this.redrawCanvas(); // Ensure we update the canvas
+            this.redrawCanvas(); 
         } else {
             console.log("No strokes to undo.");
         }
@@ -123,7 +123,7 @@ class DrawingBoard {
       
 
     private redrawCanvas(): void {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Ensure canvas is cleared
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); 
         console.log("Redrawing canvas...", this.strokes);
         
         this.strokes.forEach(stroke => {
@@ -148,10 +148,12 @@ class DrawingBoard {
     }    
 }
 
-// Initialize the drawing board
+let drawingBoard: DrawingBoard | null = null;
+
 try {
-    new DrawingBoard('drawing-board', 'toolbar');
+    drawingBoard = new DrawingBoard('drawing-board', 'toolbar');
 } catch (error) {
     console.error("Error initializing drawing board:", error);
 }
+
 
