@@ -19,8 +19,8 @@ class DrawingBoard {
         this.addEventListeners(toolbarElement);
     }
     setupCanvas() {
-        this.canvas.width = window.innerWidth * 0.8; // Adjust canvas width dynamically
-        this.canvas.height = window.innerHeight * 0.8; // Adjust canvas height dynamically
+        this.canvas.width = window.innerWidth * 0.8;
+        this.canvas.height = window.innerHeight * 0.8;
     }
     addEventListeners(toolbar) {
         toolbar.addEventListener('click', (e) => this.handleToolbarClick(e));
@@ -63,6 +63,10 @@ class DrawingBoard {
         if (this.currentStroke.length > 0) {
             console.log("Saving stroke:", this.currentStroke);
             this.strokes.push([...this.currentStroke]);
+            console.log("All strokes after save:", this.strokes);
+        }
+        else {
+            console.log("No points recorded for this stroke.");
         }
         this.currentStroke = [];
     }
@@ -88,15 +92,15 @@ class DrawingBoard {
             console.log("Undoing last stroke...");
             this.strokes.pop();
             console.log("After undo:", this.strokes);
-            this.redrawCanvas();
+            this.redrawCanvas(); // Ensure we update the canvas
         }
         else {
             console.log("No strokes to undo.");
         }
     }
     redrawCanvas() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        console.log("Redrawing canvas...");
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Ensure canvas is cleared
+        console.log("Redrawing canvas...", this.strokes);
         this.strokes.forEach(stroke => {
             if (stroke.length === 0)
                 return;
