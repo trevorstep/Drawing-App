@@ -121,9 +121,8 @@ class DrawingBoard {
         });
     }
 }
-let drawingBoard = null;
 try {
-    drawingBoard = new DrawingBoard('drawing-board', 'toolbar');
+    window.drawingBoard = new DrawingBoard('drawing-board', 'toolbar');
 }
 catch (error) {
     console.error("Error initializing drawing board:", error);

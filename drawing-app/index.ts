@@ -148,12 +148,11 @@ class DrawingBoard {
     }    
 }
 
-let drawingBoard: DrawingBoard | null = null;
-
 try {
-    drawingBoard = new DrawingBoard('drawing-board', 'toolbar');
+    (window as any).drawingBoard = new DrawingBoard('drawing-board', 'toolbar');
 } catch (error) {
     console.error("Error initializing drawing board:", error);
 }
+
 
 
