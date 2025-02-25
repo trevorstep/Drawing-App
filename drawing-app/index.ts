@@ -70,12 +70,15 @@ class DrawingBoard {
     }
 
     private stopDrawing(): void {
+        if (!this.isPainting) return;
         this.isPainting = false;
+        
         if (this.currentStroke.length > 0) {
-            this.strokes.push([...this.currentStroke]);
+            this.strokes.push([...this.currentStroke]); // Store the completed stroke
         }
-        this.ctx.beginPath(); // Reset path
+        this.currentStroke = []; // Reset the current stroke
     }
+    
 
     private draw(e: MouseEvent): void {
         if (!this.isPainting) return;
@@ -100,21 +103,23 @@ class DrawingBoard {
 
     private undoLastStroke(): void {
         if (this.strokes.length > 0) {
-            this.strokes.pop();
-            this.redrawCanvas();
+            this.strokes.pop(); // Remove last stroke
+            this.redrawCanvas(); // Redraw everything except last stroke
         }
-    }
+    }    
 
     private redrawCanvas(): void {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas
+    
         this.strokes.forEach(stroke => {
+            if (stroke.length === 0) return;
+    
             this.ctx.beginPath();
             stroke.forEach(([x, y, color, lineWidth], index) => {
                 this.ctx.strokeStyle = color;
                 this.ctx.lineWidth = lineWidth;
                 this.ctx.lineCap = 'round';
-
+    
                 if (index === 0) {
                     this.ctx.moveTo(x, y);
                 } else {
@@ -122,8 +127,9 @@ class DrawingBoard {
                 }
                 this.ctx.stroke();
             });
+            this.ctx.beginPath(); // Reset path after stroke
         });
-    }
+    }    
 }
 
 // Initialize the drawing board

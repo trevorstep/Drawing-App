@@ -57,11 +57,13 @@ class DrawingBoard {
         this.ctx.moveTo(x, y);
     }
     stopDrawing() {
+        if (!this.isPainting)
+            return;
         this.isPainting = false;
         if (this.currentStroke.length > 0) {
-            this.strokes.push([...this.currentStroke]);
+            this.strokes.push([...this.currentStroke]); // Store the completed stroke
         }
-        this.ctx.beginPath(); // Reset path
+        this.currentStroke = []; // Reset the current stroke
     }
     draw(e) {
         if (!this.isPainting)
@@ -81,13 +83,15 @@ class DrawingBoard {
     }
     undoLastStroke() {
         if (this.strokes.length > 0) {
-            this.strokes.pop();
-            this.redrawCanvas();
+            this.strokes.pop(); // Remove last stroke
+            this.redrawCanvas(); // Redraw everything except last stroke
         }
     }
     redrawCanvas() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas
         this.strokes.forEach(stroke => {
+            if (stroke.length === 0)
+                return;
             this.ctx.beginPath();
             stroke.forEach(([x, y, color, lineWidth], index) => {
                 this.ctx.strokeStyle = color;
@@ -101,6 +105,7 @@ class DrawingBoard {
                 }
                 this.ctx.stroke();
             });
+            this.ctx.beginPath(); // Reset path after stroke
         });
     }
 }
