@@ -76,7 +76,6 @@ class DrawingBoard {
         this.isPainting = false;
     
         if (this.currentStroke.length > 0) {
-            console.log("Saving stroke:", this.currentStroke);
             this.strokes.push([...this.currentStroke]); 
             console.log("All strokes after save:", this.strokes);
         } else {
@@ -98,9 +97,7 @@ class DrawingBoard {
         this.ctx.lineWidth = this.lineWidth;
         this.ctx.lineCap = 'round';
     
-        this.currentStroke.push([x, y, color, this.lineWidth]);
-        console.log("Drawing point:", x, y, color, this.lineWidth);
-    
+        this.currentStroke.push([x, y, color, this.lineWidth]);    
         this.ctx.lineTo(x, y);
         this.ctx.stroke();
     }
@@ -141,11 +138,11 @@ class DrawingBoard {
                     this.ctx.moveTo(x, y);
                 } else {
                     this.ctx.lineTo(x, y);
-                    this.ctx.stroke(); // Ensure each segment is drawn
+                    this.ctx.stroke(); 
                 }
             });
     
-            this.ctx.beginPath(); // Reset path
+            this.ctx.beginPath(); 
         });
     }    
 }
