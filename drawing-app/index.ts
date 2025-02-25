@@ -23,12 +23,14 @@ class DrawingBoard {
 
         this.setupCanvas();
         this.addEventListeners(toolbarElement);
+        window.addEventListener("resize", () => this.setupCanvas());
     }
 
-    private setupCanvas(): void {
-        this.canvas.width = window.innerWidth * 0.8; 
-        this.canvas.height = window.innerHeight * 0.8; 
+    setupCanvas() {
+        this.canvas.width = this.canvas.parentElement!.clientWidth;
+        this.canvas.height = this.canvas.parentElement!.clientHeight;
     }
+    
 
     private addEventListeners(toolbar: HTMLDivElement): void {
         toolbar.addEventListener('click', (e: MouseEvent) => this.handleToolbarClick(e));

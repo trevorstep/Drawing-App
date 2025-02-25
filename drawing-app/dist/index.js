@@ -17,10 +17,11 @@ class DrawingBoard {
         }
         this.setupCanvas();
         this.addEventListeners(toolbarElement);
+        window.addEventListener("resize", () => this.setupCanvas());
     }
     setupCanvas() {
-        this.canvas.width = window.innerWidth * 0.8;
-        this.canvas.height = window.innerHeight * 0.8;
+        this.canvas.width = this.canvas.parentElement.clientWidth;
+        this.canvas.height = this.canvas.parentElement.clientHeight;
     }
     addEventListeners(toolbar) {
         toolbar.addEventListener('click', (e) => this.handleToolbarClick(e));
