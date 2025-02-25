@@ -74,27 +74,30 @@ class DrawingBoard {
         this.isPainting = false;
         
         if (this.currentStroke.length > 0) {
-            this.strokes.push([...this.currentStroke]); // Store the completed stroke
+            console.log("Saving stroke:", this.currentStroke);
+            this.strokes.push([...this.currentStroke]); 
         }
-        this.currentStroke = []; // Reset the current stroke
+        this.currentStroke = []; 
     }
     
 
     private draw(e: MouseEvent): void {
         if (!this.isPainting) return;
-
+    
         const x = e.clientX - this.canvas.offsetLeft;
         const y = e.clientY - this.canvas.offsetTop;
         const color = this.ctx.strokeStyle as string;
-
-        this.currentStroke.push([x, y, color, this.lineWidth]);
-
+    
         this.ctx.lineWidth = this.lineWidth;
         this.ctx.lineCap = 'round';
-
+    
+        this.currentStroke.push([x, y, color, this.lineWidth]);
+        console.log("Drawing point:", x, y, color, this.lineWidth);
+    
         this.ctx.lineTo(x, y);
         this.ctx.stroke();
     }
+    
 
     private clearCanvas(): void {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -103,13 +106,19 @@ class DrawingBoard {
 
     private undoLastStroke(): void {
         if (this.strokes.length > 0) {
-            this.strokes.pop(); // Remove last stroke
-            this.redrawCanvas(); // Redraw everything except last stroke
+            console.log("Undoing last stroke...");
+            this.strokes.pop();
+            console.log("After undo:", this.strokes);
+            this.redrawCanvas(); 
+        } else {
+            console.log("No strokes to undo.");
         }
-    }    
+    }
+      
 
     private redrawCanvas(): void {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the canvas
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        console.log("Redrawing canvas...");
     
         this.strokes.forEach(stroke => {
             if (stroke.length === 0) return;
@@ -124,12 +133,14 @@ class DrawingBoard {
                     this.ctx.moveTo(x, y);
                 } else {
                     this.ctx.lineTo(x, y);
+                    this.ctx.stroke(); // Ensure each segment is drawn
                 }
-                this.ctx.stroke();
             });
-            this.ctx.beginPath(); // Reset path after stroke
+    
+            this.ctx.beginPath(); // Reset path
         });
-    }    
+    }
+    
 }
 
 // Initialize the drawing board
